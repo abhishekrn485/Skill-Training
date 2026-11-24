@@ -1,0 +1,107 @@
+'''import keyword
+print(keyword.kwlist)
+
+a=None
+print(a)'''
+
+'''a='Good Morning'
+print(a)'''
+
+'''a=(10,3,8,38j,False,'hi',(1,2))
+print(a)'''
+
+'''a = ('a':(10,20,30),'b':40)
+print(a['a'][-2])'''
+
+'''a='Hello'
+print(a[2:4])
+print(a[-3:3+1:1])'''
+
+'''a='Good Morning'
+print(a[7:11])'''
+
+'''a='hello'
+print(a[3:0:-1])
+print(a[-1:-4:-1])'''
+
+'''a='Good Morning'
+print(a[5:12:3])
+print(a[-1::3])'''
+
+'''a=int(input('Enter :'))
+if a%2==0:
+    print('Even')
+else:
+    print('Odd')'''          
+
+'''a=int(input('Enter :'))
+if a>0:
+    print('Positive')
+elif a<0:
+    print('Negative')
+else:
+    print('Zero')'''   
+
+'''a=int(input('Enter :'))
+if a>5:
+    print('Greater than 5')
+elif a<5:
+    print('Less than 5')
+else:
+    print('Equal to 5')'''
+
+'''l=eval(input('Enter list:'))
+if len(l)==5:
+    print('yes')
+else:
+    print('no')'''
+
+'''ch=input('Enter :')
+if 'a'<=ch<='z':
+    print('Lowercase')
+elif 'A'<=ch<='Z':
+    print('Uppercase')
+else:
+    print('Not a letter')'''
+
+'''un=int(input('Enter username:'))
+if un=='admin':
+    pw=int(input('Enter password:'))
+    if pw==1234:
+        print('Login successful')
+    else:
+        print('Incorrect password') '''
+
+'''i=0
+while i<=100:
+    print(i)
+    i+=2'''
+
+'''n=int(input('Enter the num:'))
+rev=0
+while n>0:
+    Id=n%10
+    n=n//10
+    rev=rev*10+Id
+    print(rev)
+l=[10,20,30]
+s=input('Enter the num:')
+if in l:
+    if "A"<=s<"Z":
+        print('Uppercase')'''
+
+'''for i in range(1,6):
+    print('*')'''
+
+'''for i in range(1,6):
+    for j in range(1,6):
+        print('*',end=' ')
+    print()'''
+
+'''for i in range(1,6):
+    for j in range(1,i+1):
+        if i==j:
+            print('1',end=' ')
+        else:
+            print('0',end=' ')
+    print()'''
