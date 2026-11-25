@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meeting Action Item Extractor</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f3f5fa;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:25px;color:#202b3c}
+.container{width:100%;max-width:750px;background:white;padding:35px;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+h1{font-size:27px;margin-bottom:10px}.subtitle{color:#718096;margin-bottom:25px;line-height:1.5}
+label{display:block;font-weight:bold;margin-bottom:10px}
+textarea{width:100%;height:170px;padding:15px;border:1px solid #d5dce8;border-radius:9px;font-size:15px;resize:vertical;outline:none;font-family:inherit}
+textarea:focus{border-color:#4169e1}.mode-section{margin:22px 0}.mode-buttons{display:flex;gap:10px;flex-wrap:wrap}
+.mode-buttons button{padding:11px 20px;border:1px solid #d5dce8;background:white;border-radius:8px;cursor:pointer}
+.mode-buttons button.active{background:#e8edff;color:#3155c6;border-color:#4169e1;font-weight:bold}
+.extract-btn{width:100%;padding:15px;background:#315de0;color:white;border:0;border-radius:9px;font-size:16px;font-weight:bold;cursor:pointer}
+.extract-btn:hover{background:#2448b9}.extract-btn:disabled{opacity:.6;cursor:wait}
+.output{margin-top:25px}.message{padding:13px;background:#fff4df;color:#946200;border-radius:8px;margin-bottom:15px}
+.action-card{border:1px solid #e1e6ef;padding:17px;margin-top:12px;border-radius:10px;background:#fafbff}
+.action-card h3{font-size:16px;margin-bottom:12px}.action-card p{margin:7px 0;color:#596579;font-size:14px}
+.review{margin-top:20px;color:#718096;font-size:13px}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Meeting Action Item Extractor</h1>
+<p class="subtitle">Convert your meeting notes into organized tasks, assigned owners and deadlines.</p>
+<label for="notes">Meeting Notes</label>
+<textarea id="notes" placeholder="Enter your meeting notes here...
+
+Example:
+Rahul: Complete the project report by Friday.
+Priya: Prepare the presentation by Monday.
+Arun: Submit the documentation by 30 November."></textarea>
+<div class="mode-section">
+<label>Extraction Mode</label>
+<div class="mode-buttons">
+<button id="offlineBtn" class="active" onclick="selectMode('offline')">Offline</button>
+<button id="liveBtn" onclick="selectMode('live')">Gemini Flash 3.8</button>
+</div>
+</div>
+<button class="extract-btn" id="extractBtn" onclick="extractActions()">✓ Extract Action Items</button>
+<div class="output" id="output" aria-live="polite"></div>
+</div>
+<script>
+let selectedMode="offline";
+function selectMode(mode){
+ selectedMode=mode;
+ document.getElementById("offlineBtn").classList.toggle("active",mode==="offline");
+ document.getElementById("liveBtn").classList.toggle("active",mode==="live");
+}
+function offlineExtract(text){
+ const actions=[];
+ text.split("\n").forEach(line=>{
+  const match=line.match(/^\s*([^:]+):\s*(.+?)(?:\s+by\s+(.+))?\s*$/i);
+  if(match) actions.push({task:match[2].trim(),owner:match[1].trim(),deadline:match[3]?match[3].trim():"Not specified"});
+ });
+ return actions;
+}
+function escapeHTML(value){
+ return String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[char]));
+}
+async function extractActions(){
+ const notes=document.getElementById("notes").value.trim();
+ const output=document.getElementById("output");
+ const button=document.getElementById("extractBtn");
+ output.innerHTML="";
+ if(!notes){output.innerHTML='<div class="message">Please enter meeting notes first.</div>';return;}
+ button.disabled=true;button.textContent="Extracting...";
+ try{
+  if(selectedMode==="live") throw new Error("Gemini API is not connected yet. Configure a secure backend to enable live extraction.");
+  const actions=offlineExtract(notes);
+  if(!actions.length){output.innerHTML='<div class="message">No actions found. In offline mode, use: Name: task by deadline</div>';return;}
+  let html="<h2>Extracted Action Items</h2>";
+  actions.forEach((action,index)=>{
+   html+=`<div class="action-card"><h3>${index+1}. ${escapeHTML(action.task)}</h3><p><strong>Owner:</strong> ${escapeHTML(action.owner)}</p><p><strong>Due:</strong> ${escapeHTML(action.deadline)}</p></div>`;
+  });
+  html+='<p class="review">Review every item against the original notes before using it.</p>';
+  output.innerHTML=html;
+ }catch(error){output.innerHTML=`<div class="message">${escapeHTML(error.message)}</div>`;}
+ finally{button.disabled=false;button.textContent="✓ Extract Action Items";}
+}
+</script>
+</body>
+</html>
